@@ -1,6 +1,7 @@
 package com.cinego.cingobackend.controller.admin;
 
 import com.cinego.cingobackend.service.FilmService;
+
 import com.cinego.cingobackend.service.GenreService;
 import com.cinego.cingobackend.service.SalleService;
 import com.cinego.cingobackend.service.SeanceService;
@@ -20,6 +21,7 @@ public class AdminDashboardController {
 
     @GetMapping("/admin")
     public String dashboard(Model model) {
+        model.addAttribute("currentPage", "dashboard");
         model.addAttribute("filmCount", filmService.count());
         model.addAttribute("genreCount", genreService.count());
         model.addAttribute("salleCount", salleService.count());

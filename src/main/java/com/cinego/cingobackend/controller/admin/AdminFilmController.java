@@ -22,12 +22,14 @@ public class AdminFilmController {
 
     @GetMapping
     public String list(Model model) {
+        model.addAttribute("currentPage", "films");
         model.addAttribute("films", filmService.getListAll());
         return "admin/films/list";
     }
 
     @GetMapping("/new")
     public String createForm(Model model) {
+        model.addAttribute("currentPage", "films");
         model.addAttribute("film", new Film());
         model.addAttribute("genres", genreService.getListAll());
         model.addAttribute("nationalites", nationaliteService.getListAll());
@@ -37,6 +39,7 @@ public class AdminFilmController {
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("currentPage", "films");
         model.addAttribute("film", filmService.get(id));
         model.addAttribute("genres", genreService.getListAll());
         model.addAttribute("nationalites", nationaliteService.getListAll());

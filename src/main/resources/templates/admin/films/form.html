@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Formulaire Film - CineGo Admin</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800" th:text="${film.id != null} ? 'Modifier le Film' : 'Nouveau Film'">Film</h1>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form th:action="@{/admin/films/save}" th:object="${film}" method="post">
+                <input type="hidden" th:field="*{id}"/>
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Titre</label>
+                        <input type="text" th:field="*{titre}" class="form-control" required="required"/>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Duree (min)</label>
+                        <input type="number" th:field="*{duree}" class="form-control" required="required"/>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Annee</label>
+                        <input type="number" th:field="*{annee}" class="form-control" required="required"/>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Genre</label>
+                        <select th:field="*{genre}" class="form-select">
+                            <option value="">-- Choisir --</option>
+                            <option th:each="g : ${genres}" th:value="${g.id}" th:text="${g.libelle}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Nationalite</label>
+                        <select th:field="*{nationalite}" class="form-select">
+                            <option value="">-- Choisir --</option>
+                            <option th:each="n : ${nationalites}" th:value="${n.id}" th:text="${n.libelle}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Realisateur</label>
+                        <select th:field="*{realisateur}" class="form-select">
+                            <option value="">-- Choisir --</option>
+                            <option th:each="p : ${personnes}" th:value="${p.id}" th:text="${p.prenom + ' ' + p.nom}"></option>
+                        </select>
+                    </div>
+                </div>
+                <hr/>
+                <a th:href="@{/admin/films}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Annuler</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>
