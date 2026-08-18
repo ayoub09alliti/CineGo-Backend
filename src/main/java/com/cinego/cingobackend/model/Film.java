@@ -15,9 +15,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -57,8 +54,7 @@ public class Film extends AbstractModel<Long>{
     @JoinColumn(name="DIRECTOR_ID")
     private Personne realisateur;
 
-    @ManyToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
       name="FILM_ACTEUR",
       joinColumns=@JoinColumn(name="FILM_ID", referencedColumnName="ID"),
@@ -69,9 +65,8 @@ public class Film extends AbstractModel<Long>{
     @JsonIgnore
 	private List<Seance> seances;
     
-    @OneToMany(mappedBy = "film", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "film", cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnore
-    @LazyCollection(LazyCollectionOption.FALSE)
 	private List<Media> medias;
     
     @Column(name = "added_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)

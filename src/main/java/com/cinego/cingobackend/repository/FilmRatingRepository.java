@@ -18,18 +18,19 @@ import com.cinego.dto.FilmRatingPk;
 @RepositoryRestResource(exported = false)
 public interface FilmRatingRepository extends CrudRepository<FilmRating, FilmRatingPk>{
 	 /**
-     * Lookup all the FilmRatings for a tour.
+     * Recherche toutes les notes d'un film.
      *
-     * @param filmId is the tour Identifier
-     * @return a List of any found FilmRatings
+     * @param filmId est l'identifiant du film
+     * @return une liste des notes trouvées
      */
     List<FilmRating> findByPkFilmId(Long filmId);
 
     /**
-     * Lookup a TourRating by the TourId and Customer Id
-     * @param filmId tour identifier
-     * @param customerId customer identifier
-     * @return Optional of found FilmRatings.
+     * Recherche la note d'un film par client.
+     *
+     * @param filmId identifiant du film
+     * @param customerId identifiant du client
+     * @return Optional de la note trouvée
      */
-    Optional<FilmRating> findByPkFilmIdAndPkCustomerId(Long tourId, Long customerId);
+    Optional<FilmRating> findByPkFilmIdAndPkCustomerId(Long filmId, Long customerId);
 }
