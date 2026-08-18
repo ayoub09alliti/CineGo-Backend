@@ -1,8 +1,5 @@
 package com.cinego.cingobackend.service;
 
-
-
-
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
