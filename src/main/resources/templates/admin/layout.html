@@ -63,6 +63,34 @@
             </a>
         </li>
 
+        <li class="nav-item" th:classappend="${currentPage == 'nationalites'} ? 'active' : ''">
+            <a class="nav-link" th:href="@{/admin/nationalites}">
+                <i class="fas fa-fw fa-flag"></i>
+                <span>Nationalites</span>
+            </a>
+        </li>
+
+        <li class="nav-item" th:classappend="${currentPage == 'personnes'} ? 'active' : ''">
+            <a class="nav-link" th:href="@{/admin/personnes}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Personnes</span>
+            </a>
+        </li>
+
+        <li class="nav-item" th:classappend="${currentPage == 'medias'} ? 'active' : ''">
+            <a class="nav-link" th:href="@{/admin/medias}">
+                <i class="fas fa-fw fa-images"></i>
+                <span>Medias</span>
+            </a>
+        </li>
+
+        <li class="nav-item" th:classappend="${currentPage == 'customers'} ? 'active' : ''">
+            <a class="nav-link" th:href="@{/admin/customers}">
+                <i class="fas fa-fw fa-user-group"></i>
+                <span>Customers</span>
+            </a>
+        </li>
+
         <hr class="sidebar-divider d-none d-md-block"/>
         <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -83,6 +111,14 @@
                             <i class="fas fa-globe fa-fw"></i>
                             <span class="d-none d-lg-inline text-gray-600 small">Site Public</span>
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link">
+                                <i class="fas fa-sign-out-alt fa-fw"></i>
+                                <span class="d-none d-lg-inline text-gray-600 small">Deconnexion</span>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </nav>

@@ -1,8 +1,11 @@
 package com.cinego.cingobackend.controller.admin;
 
+import com.cinego.cingobackend.service.CustomersService;
 import com.cinego.cingobackend.service.FilmService;
-
 import com.cinego.cingobackend.service.GenreService;
+import com.cinego.cingobackend.service.MediaService;
+import com.cinego.cingobackend.service.NationaliteService;
+import com.cinego.cingobackend.service.PersonneService;
 import com.cinego.cingobackend.service.SalleService;
 import com.cinego.cingobackend.service.SeanceService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,10 @@ public class AdminDashboardController {
     private final GenreService genreService;
     private final SalleService salleService;
     private final SeanceService seanceService;
+    private final NationaliteService nationaliteService;
+    private final PersonneService personneService;
+    private final MediaService mediaService;
+    private final CustomersService customersService;
 
     @GetMapping("/admin")
     public String dashboard(Model model) {
@@ -26,6 +33,10 @@ public class AdminDashboardController {
         model.addAttribute("genreCount", genreService.count());
         model.addAttribute("salleCount", salleService.count());
         model.addAttribute("seanceCount", seanceService.count());
+        model.addAttribute("nationaliteCount", nationaliteService.count());
+        model.addAttribute("personneCount", personneService.count());
+        model.addAttribute("mediaCount", mediaService.count());
+        model.addAttribute("customerCount", customersService.count());
         return "admin/dashboard";
     }
 }
