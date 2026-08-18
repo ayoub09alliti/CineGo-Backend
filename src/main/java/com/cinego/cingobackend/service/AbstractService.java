@@ -54,5 +54,10 @@ public abstract class AbstractService<T extends AbstractModel<Long>, Long extend
     public List<T> getListAll() {
         return getRepository().findAll();
     }
+    public long count() {
+        return getRepository().count();
+    }
+ 
+ 
 
 }
