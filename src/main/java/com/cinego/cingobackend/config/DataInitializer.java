@@ -1,10 +1,10 @@
 package com.cinego.cingobackend.config;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,6 +31,10 @@ import com.cinego.cingobackend.repository.PersonneRepository;
 import com.cinego.cingobackend.repository.SalleRepository;
 import com.cinego.cingobackend.repository.SeanceRepository;
 import com.cinego.cingobackend.repository.UserRepository;
+
+import com.cinego.cingobackend.repository.FilmRatingRepository;
+import com.cinego.dto.FilmRating;
+import com.cinego.dto.FilmRatingPk;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -60,6 +64,9 @@ public class DataInitializer implements CommandLineRunner {
     private CustomersRepository customersRepository;
 
     @Autowired
+    private FilmRatingRepository filmRatingRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -68,6 +75,77 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (databaseNotEmpty()) {
+            // Ensure existing users have roles
+            userRepository.findAll().forEach(u -> {
+                boolean modified = false;
+                if (u.getRole() == null || u.getRole().isBlank()) {
+                    u.setRole("admin".equalsIgnoreCase(u.getUsername()) ? "ROLE_ADMIN" : "ROLE_USER");
+                    modified = true;
+                } else if ("admin".equalsIgnoreCase(u.getUsername()) && !"ROLE_ADMIN".equals(u.getRole())) {
+                    u.setRole("ROLE_ADMIN");
+                    modified = true;
+                }
+                if (modified) {
+                    userRepository.save(u);
+                }
+            });
+
+            // Ensure existing customers have hashed passwords
+            customersRepository.findAll().forEach(c -> {
+                if (c.getPassword() == null || c.getPassword().isBlank()) {
+                    String defaultPass = "awa".equalsIgnoreCase(c.getFirstname()) ? "awa123" : "jean123";
+                    c.setPassword(passwordEncoder.encode(defaultPass));
+                    customersRepository.save(c);
+                }
+            });
+
+            // Ensure all films in DB have photo URLs from backend
+            filmRepository.findAll().forEach(f -> {
+                boolean modified = false;
+                if (f.getPhoto() == null || f.getPhoto().isBlank()) {
+                    String t = f.getTitre() != null ? f.getTitre().toLowerCase() : "";
+                    if (t.contains("pulp")) {
+                        f.setPhoto("https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=800");
+                    } else if (t.contains("inception")) {
+                        f.setPhoto("https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800");
+                    } else if (t.contains("mandabi")) {
+                        f.setPhoto("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800");
+                    } else if (t.contains("kill")) {
+                        f.setPhoto("https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800");
+                    } else {
+                        f.setPhoto("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800");
+                    }
+                    modified = true;
+                }
+                if (modified) {
+                    filmRepository.save(f);
+                }
+            });
+
+            // Ensure seed ratings in film_rating table
+            if (filmRatingRepository.count() == 0) {
+                List<Film> films = filmRepository.findAll();
+                List<Customers> customers = customersRepository.findAll();
+                if (!films.isEmpty() && !customers.isEmpty()) {
+                    Long c1 = customers.get(0).getId();
+                    Long c2 = customers.size() > 1 ? customers.get(1).getId() : c1;
+
+                    for (Film f : films) {
+                        FilmRating r1 = new FilmRating(new FilmRatingPk(f.getId(), c1), 5);
+                        r1.setComment("Film exceptionnel, acteurs et scénario au sommet !");
+                        r1.setAddedDate(new Date());
+                        filmRatingRepository.save(r1);
+
+                        if (!c1.equals(c2)) {
+                            FilmRating r2 = new FilmRating(new FilmRatingPk(f.getId(), c2), 5);
+                            r2.setComment("Excellente réalisation et bande-son inoubliable.");
+                            r2.setAddedDate(new Date());
+                            filmRatingRepository.save(r2);
+                        }
+                    }
+                }
+            }
+
             System.out.println(">>> La base de donnees contient deja des donnees, seed ignore.");
             return;
         }
@@ -210,11 +288,13 @@ public class DataInitializer implements CommandLineRunner {
         awa.setFirstname("Awa");
         awa.setLastname("Diallo");
         awa.setEmail("awa.diallo@mail.com");
+        awa.setPassword(passwordEncoder.encode("awa123"));
 
         Customers jean = new Customers();
         jean.setFirstname("Jean");
         jean.setLastname("Dupont");
         jean.setEmail("jean.dupont@mail.com");
+        jean.setPassword(passwordEncoder.encode("jean123"));
 
         customersRepository.saveAll(Arrays.asList(awa, jean));
 
@@ -222,11 +302,13 @@ public class DataInitializer implements CommandLineRunner {
         admin.setUsername("admin");
         admin.setEmail("admin@cinego.com");
         admin.setPassword(passwordEncoder.encode("1111"));
+        admin.setRole("ROLE_ADMIN");
 
         User userAwa = new User();
         userAwa.setUsername("awa");
         userAwa.setEmail("awa@cinego.com");
         userAwa.setPassword(passwordEncoder.encode("awa123"));
+        userAwa.setRole("ROLE_USER");
 
         userRepository.saveAll(Arrays.asList(admin, userAwa));
 

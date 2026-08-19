@@ -18,6 +18,8 @@ public interface InlineFilm {
 
     int getAnnee();
 
+    String getPhoto();
+
     Genre getGenre();
 
     Nationalite getNationalite();

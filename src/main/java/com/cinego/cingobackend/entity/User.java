@@ -30,4 +30,7 @@ public class User {
     private String email;
 
     private String password;
+
+    @Column(nullable = false)
+    private String role = "ROLE_USER";
 }
