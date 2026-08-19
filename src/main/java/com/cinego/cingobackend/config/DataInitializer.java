@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.cinego.cingobackend.entity.User;
@@ -60,6 +61,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -217,12 +221,12 @@ public class DataInitializer implements CommandLineRunner {
         User admin = new User();
         admin.setUsername("admin");
         admin.setEmail("admin@cinego.com");
-        admin.setPassword("admin123");
+        admin.setPassword(passwordEncoder.encode("1111"));
 
         User userAwa = new User();
         userAwa.setUsername("awa");
         userAwa.setEmail("awa@cinego.com");
-        userAwa.setPassword("awa123");
+        userAwa.setPassword(passwordEncoder.encode("awa123"));
 
         userRepository.saveAll(Arrays.asList(admin, userAwa));
 

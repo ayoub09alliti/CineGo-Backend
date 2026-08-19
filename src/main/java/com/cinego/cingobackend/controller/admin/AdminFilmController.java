@@ -9,6 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/films")
@@ -48,14 +55,51 @@ public class AdminFilmController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute Film film) {
+    public String save(@ModelAttribute Film film,
+                       @RequestParam(value = "photoFile", required = false) MultipartFile photoFile) {
+        if (photoFile != null && !photoFile.isEmpty()) {
+            String oldPhoto = film.getPhoto();
+            film.setPhoto(storePhoto(photoFile));
+            if (oldPhoto != null && !oldPhoto.isEmpty()) {
+                deleteStoredPhoto(oldPhoto);
+            }
+        }
         filmService.save(film);
         return "redirect:/admin/films";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
+        Film film = filmService.get(id);
+        if (film.getPhoto() != null && !film.getPhoto().isEmpty()) {
+            deleteStoredPhoto(film.getPhoto());
+        }
         filmService.delete(id);
         return "redirect:/admin/films";
+    }
+
+    private String storePhoto(MultipartFile file) {
+        try {
+            Path dir = Paths.get("uploads", "films").toAbsolutePath().normalize();
+            Files.createDirectories(dir);
+            String ext = "";
+            String original = file.getOriginalFilename();
+            if (original != null && original.contains(".")) {
+                ext = original.substring(original.lastIndexOf("."));
+            }
+            String name = UUID.randomUUID().toString().replace("-", "") + ext;
+            file.transferTo(dir.resolve(name).toFile());
+            return name;
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lors du stockage de la photo", e);
+        }
+    }
+
+    private void deleteStoredPhoto(String name) {
+        try {
+            Path file = Paths.get("uploads", "films").toAbsolutePath().normalize().resolve(name);
+            Files.deleteIfExists(file);
+        } catch (IOException ignored) {
+        }
     }
 }

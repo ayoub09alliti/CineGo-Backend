@@ -5,7 +5,12 @@ import lombok.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 @Getter
@@ -25,7 +30,19 @@ public class Customers extends AbstractModel<Long> {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = true, length = 100)
+    private String password;
+
     @Column(name = "added_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date addedDate;
+
+    @PrePersist
+    @PreUpdate
+    public void hashPasswordIfNeeded() {
+        if (password != null && !password.isEmpty() && !password.startsWith("$2")) {
+            this.password = new BCryptPasswordEncoder().encode(this.password);
+        }
+    }
 
 }

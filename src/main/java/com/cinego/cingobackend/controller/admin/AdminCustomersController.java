@@ -34,6 +34,10 @@ public class AdminCustomersController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute Customers customer) {
+        if (customer.getId() != null) {
+            Customers existing = customersService.get(customer.getId());
+            customer.setPassword(existing.getPassword());
+        }
         customersService.save(customer);
         return "redirect:/admin/customers";
     }

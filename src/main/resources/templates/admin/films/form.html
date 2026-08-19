@@ -17,7 +17,7 @@
     </div>
     <div class="card shadow mb-4">
         <div class="card-body">
-            <form th:action="@{/admin/films/save}" th:object="${film}" method="post">
+            <form th:action="@{/admin/films/save}" th:object="${film}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}"/>
                 <div class="row mb-3">
                     <div class="col-md-8">
@@ -56,6 +56,15 @@
                             <option value="">-- Choisir --</option>
                             <option th:each="p : ${personnes}" th:value="${p.id}" th:text="${p.prenom + ' ' + p.nom}"></option>
                         </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Photo du film</label>
+                        <input type="file" name="photoFile" accept="image/*" class="form-control"/>
+                        <div th:if="${film.photo != null and !film.photo.isEmpty()}" class="mt-2">
+                            <img th:src="@{/uploads/films/{name}(name=${film.photo})}" alt="Photo" width="120" class="img-thumbnail"/>
+                        </div>
                     </div>
                 </div>
                 <hr/>

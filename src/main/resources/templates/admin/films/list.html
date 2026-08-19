@@ -26,6 +26,7 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th>ID</th>
+                            <th>Photo</th>
                             <th>Titre</th>
                             <th>Duree</th>
                             <th>Annee</th>
@@ -37,6 +38,12 @@
                     <tbody>
                         <tr th:each="film : ${films}">
                             <td th:text="${film.id}"></td>
+                            <td>
+                                <img th:if="${film.photo != null and !film.photo.isEmpty()}"
+                                     th:src="@{/uploads/films/{name}(name=${film.photo})}"
+                                     alt="Photo" width="60" class="img-thumbnail"/>
+                                <i th:if="${film.photo == null or film.photo.isEmpty()}" class="fas fa-image fa-2x text-gray-300"></i>
+                            </td>
                             <td th:text="${film.titre}"></td>
                             <td th:text="${film.duree} + ' min'"></td>
                             <td th:text="${film.annee}"></td>
@@ -52,7 +59,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(films)}">
-                            <td colspan="7" class="text-center text-gray-500 py-4">Aucun film trouve.</td>
+                            <td colspan="8" class="text-center text-gray-500 py-4">Aucun film trouve.</td>
                         </tr>
                     </tbody>
                 </table>
